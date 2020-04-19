@@ -77,7 +77,7 @@ class Router{
    }
 
    private function convertPatternToRegex($pattern){
-      $regex = preg_replace('@:\w+@', '([\w\d\-\.,]+)', $pattern);
+      $regex = preg_replace('@{\w+}@', '([\w\d\-\.,]+)', $pattern);
       if ( substr($regex, -1) === '/' ) {
          $regex .= '?';
       }

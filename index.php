@@ -9,7 +9,7 @@ $router->any('/', function(){
    echo 'home';
 });
 
-$router->add('GET', '/info/:id/', function($id) {
+$router->add('GET', '/info/{id}/', function($id) {
    echo "Infos for id: $id";
 });
 
