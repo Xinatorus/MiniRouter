@@ -7,7 +7,7 @@ class Router{
    private $params;
    private $function;
 
-   function __construct(){
+   public function __construct(){
       $this->routes = [];
       $this->function = NULL;
       $this->params = [];
@@ -51,7 +51,10 @@ class Router{
 
    public function run($method, $uri){
       if($this->matchRoute($method, $uri)){
-         if (is_callable($this->function)) {
+         if(class_exists($this->function)){
+            new $this->function(...$this->params);
+         }else if (is_callable($this->function)) {
+            echo 'isCallable';
             call_user_func_array($this->function, $this->params);
          }
       }else{
