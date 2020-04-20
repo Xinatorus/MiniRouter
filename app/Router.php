@@ -10,6 +10,7 @@ class Router{
    public function __construct(){
       $this->routes = [];
       $this->function = NULL;
+      $this->defaultFunction = NULL;
       $this->params = [];
    }
 
@@ -50,16 +51,23 @@ class Router{
    }
 
    public function run($method, $uri){
-      if($this->matchRoute($method, $uri)){
-         if(class_exists($this->function)){
+      if(!$this->matchRoute($method, $uri)){
+         $this->function = $this->defaultFunction;
+      }
+
+      if($this->function !== NULL){
+         if(strpos($this->function, '@') !== false){
+            list($class, $function) = explode('@', $this->function);
+            $method = new ReflectionMethod($class, $function);
+            if($method->isStatic()){
+               call_user_func_array([$class, $function], $this->params);
+            }else{
+               call_user_func_array([new $class, $function], $this->params);
+            }
+         }else if(class_exists($this->function)){
             new $this->function(...$this->params);
          }else if (is_callable($this->function)) {
-            echo 'isCallable';
             call_user_func_array($this->function, $this->params);
-         }
-      }else{
-         if (is_callable($this->defaultFunction)) {
-            call_user_func($this->defaultFunction);
          }
       }
    }
